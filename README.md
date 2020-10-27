@@ -2,7 +2,7 @@
 pretty print CSV files in tabular form
 
 ## Usage
-`Usage: tabulate.py <file> [optional delimiter]`
+`Usage: python3 tabulate.py <file> [optional delimiter]`
 
 By default, the delimiter is a comma.
 
