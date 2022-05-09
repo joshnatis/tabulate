@@ -1,4 +1,5 @@
 import sys
+import csv
 
 def get_max_col_lengths(df):
 	lengths = []
@@ -16,10 +17,10 @@ def print_table(df):
 
 	print_border(df_width, col_widths)
 	for row in df:
-		print("|",end="")
+		print('|', end='')
 		for i in range(len(row)):
-			print(row[i].ljust(col_widths[i])+"|", end="")
-		print("")
+			print(row[i].ljust(col_widths[i]) + '|', end="")
+		print('')
 
 		if header:
 			print_border(df_width, col_widths)
@@ -27,13 +28,13 @@ def print_table(df):
 	print_border(df_width, col_widths)
 
 def print_border(df_width, col_widths):
-	border = "-" * (df_width - 1)
+	border = '-' * (df_width - 1)
 	elapsed = 0
 	for length in col_widths:
 		elapsed += length
-		border = border[:elapsed] + "+" + border[elapsed + 1:]
+		border = border[:elapsed] + '+' + border[elapsed + 1:]
 		elapsed += 1
-	print("+" + border)
+	print('+' + border)
 
 def pad_missing_columns(df):
 	max_cols = len(df[0])
@@ -43,27 +44,22 @@ def pad_missing_columns(df):
 		elif len(df[i]) > max_cols:
 			df[i] = df[i][:max_cols]
 
-def main():
-	delim = ","
-	if len(sys.argv) < 2:
-		print("Usage:", sys.argv[0], "<file> [optional delimiter]")
-		exit(1)
-	elif len(sys.argv) == 3:
-		delim = sys.argv[2]
-
+def tabulate(lines, delim=','):
 	df = []
-	try:
-		with open(sys.argv[1],'r') as f:
-			for row in f:
-				columns = [(" " + col.strip() + " ") for col in row.split(delim)]
-				df.append(columns)
+	reader = csv.reader(lines)
+	for row in reader:
+		row = [(' ' + col.strip() + ' ') for col in row]
+		df.append(row)
 
-			pad_missing_columns(df)
-			print_table(df)
+	if not df:
+		return ''
 
-	except IndexError:
-		print("IndexError: make sure your fields don't have a '" + delim + "' within them.")
-	except OSError:
-		print("Unable to open the file", sys.argv[1])
+	pad_missing_columns(df)
+	print_table(df)
 
-main()
+def main():
+	tabulate(sys.stdin.readlines())
+
+if __name__ == '__main__':
+	try: main()
+	except IndexError: pass
